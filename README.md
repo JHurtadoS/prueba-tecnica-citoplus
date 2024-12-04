@@ -71,28 +71,138 @@ $ mau deploy
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
-## Resources
+# Database Setup
 
-Check out a few resources that may come in handy when working with NestJS:
+## Supabase Tables
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### **auth.users** (managed by Supabase)
+- Stores user authentication details (e.g., email, password).
 
-## Support
+### **profiles**
+- **id (UUID)**: Foreign key linked to `auth.users`.
+- **name (string)**: User's name.
+- **roles (array)**: List of roles (e.g., Admin, Editor, Viewer).
+- **is_active (boolean)**: Indicates if the user is active.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### **audit_logs**
+- **id (UUID)**: Primary key.
+- **user_id (UUID)**: ID of the user performing the action.
+- **target_id (UUID)**: ID of the affected profile.
+- **action (text)**: Action performed (e.g., `create`, `update`).
+- **details (JSONB)**: Additional details about the action.
+- **created_at (timestamp)**: Timestamp of the action.
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Key Policies
+
+### **Profiles Table**
+- **Insert**: Only Admins can create profiles.
+- **Select**: 
+  - Users can only view their own profile.
+  - Admins can view all profiles.
+- **Update**: 
+  - Users can update their own profile.
+  - Admins can update any profile.
+- **Delete**: Not directly implemented; use the `is_active` field for logical deletion.
+
+### **Audit Logs**
+- All changes to the `profiles` table trigger automatic entries in the `audit_logs` table via PostgreSQL triggers.
+
+---
+
+## Development Notes
+
+### **Testing Authentication**
+Use Postman or any API testing tool:
+1. Generate a JWT token via `POST /auth/login` with your email and password.
+2. Include the token in the `Authorization` header as `Bearer <token>` for protected routes.
+
+### **Logging**
+- Logs user actions for debugging and security.
+- Ensure logs are stored correctly in the `audit_logs` table.
+
+---
+
+## Example Usage
+
+### **Create a User**
+**Endpoint**:  
+`POST /users/create`
+
+**Body**:
+```json
+{
+  "email": "new_user@example.com",
+  "password": "securePassword123",
+  "name": "New User",
+  "roles": ["Editor"]
+}
+```
+
+### **Authenticate a User**
+**Endpoint**:  
+`POST /auth/login`
+
+**Body**:
+```json
+{
+  "email": "new_user@example.com",
+  "password": "securePassword123"
+}
+```
+
+**Response**:
+```json
+{
+  "accessToken": "<JWT_TOKEN>"
+}
+```
+
+---
+
+## Folder Structure
+
+```
+src/
+├── auth/
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   ├── auth.guard.ts
+├── users/
+│   ├── users.controller.ts
+│   ├── users.service.ts
+│   ├── dto/
+│   └── entities/
+├── logs/
+│   ├── logs.service.ts
+│   └── logs.module.ts
+├── supabase/
+│   ├── supabase.service.ts
+│   └── supabase.module.ts
+```
+
+---
+
+## Testing
+
+Run the following commands:
+
+### Unit Tests
+```bash
+npm run test
+```
+
+### End-to-End Tests
+```bash
+npm run test:e2e
+```
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
 
 ## License
 
