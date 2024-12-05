@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SupabaseService } from '../supabase/supabase.service';
-import { LogsService } from 'src/logs/logs.service';
+import { LogsService } from '../logs/logs.service';
 
 @Injectable()
 export class AuthService {
@@ -25,8 +25,8 @@ export class AuthService {
         if (error || !user) {
             // Registrar intento fallido de inicio de sesión
             await this.logsService.logAction(
-                null, // No hay usuario identificado
-                null, // No hay objetivo afectado
+                "", // No hay usuario identificado
+                "", // No hay objetivo afectado
                 'LOGIN_FAILED',
                 { email, error: error?.message },
             );
@@ -44,7 +44,7 @@ export class AuthService {
             // Registrar que el perfil no se encontró
             await this.logsService.logAction(
                 user.user.id,
-                null,
+                "",
                 'PROFILE_NOT_FOUND',
                 { email: user.user.email },
             );

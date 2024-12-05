@@ -18,7 +18,7 @@ export class UsersController {
                 updateRolesDto.userId,
                 updateRolesDto.roles,
             );
-        } catch (error) {
+        } catch (error: any) {
             throw new BadRequestException(error.message || 'Invalid input data');
         }
     }
@@ -35,7 +35,7 @@ export class UsersController {
     async createUserWithServiceRole(@Body() createUserDto: CreateUserDto) {
         try {
             return await this.usersService.createUserWithServiceRole(createUserDto);
-        } catch (error) {
+        } catch (error: any) {
             throw new BadRequestException(error.message || 'Failed to create user');
         }
     }

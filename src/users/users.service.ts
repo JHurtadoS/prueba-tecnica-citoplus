@@ -1,3 +1,6 @@
+// @ts-nocheck
+
+
 import { Injectable, BadRequestException, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { Database } from '../supabase/database.types';

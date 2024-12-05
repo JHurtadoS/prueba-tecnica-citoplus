@@ -2,9 +2,9 @@ import { IsArray, IsUUID, IsEnum } from 'class-validator';
 
 export class UpdateRolesDto {
     @IsUUID()
-    userId: string;
+    userId!: string;
 
     @IsArray()
     @IsEnum(['Admin', 'Editor', 'Viewer'], { each: true }) // Valida cada valor del array
-    roles: ('Admin' | 'Editor' | 'Viewer')[];
+    roles!: ('Admin' | 'Editor' | 'Viewer')[];
 }

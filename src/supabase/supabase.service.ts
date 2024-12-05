@@ -1,38 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class SupabaseService {
-    private readonly supabaseClient;
-    private readonly supabaseAdminClient;
+    private readonly supabaseClient: SupabaseClient;
+    private readonly supabaseAdminClient: SupabaseClient;
 
     constructor() {
+        // Validar que las variables de entorno estén definidas
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_KEY;
+        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE;
+
+        if (!supabaseUrl || !supabaseKey || !serviceRoleKey) {
+            throw new Error('Missing Supabase environment variables');
+        }
+
         // Cliente para operaciones regulares
-        this.supabaseClient = createClient(
-            process.env.SUPABASE_URL, // URL del proyecto
-            process.env.SUPABASE_KEY, // Clave regular
-        );
+        this.supabaseClient = createClient(supabaseUrl, supabaseKey);
 
         // Cliente para operaciones administrativas
-        this.supabaseAdminClient = createClient(
-            process.env.SUPABASE_URL, // URL del proyecto
-            process.env.SUPABASE_SERVICE_ROLE, // Clave de service_role
-        );
+        this.supabaseAdminClient = createClient(supabaseUrl, serviceRoleKey);
     }
 
-    getClient() {
+    // Cliente para operaciones regulares
+    getClient(): SupabaseClient {
         return this.supabaseClient;
     }
 
-    getAdminClient() {
+    // Cliente para operaciones administrativas
+    getAdminClient(): SupabaseClient {
         return this.supabaseAdminClient;
     }
 
-    getClientWithToken(token: string) {
-        return createClient(
-            process.env.SUPABASE_URL,
-            process.env.SUPABASE_KEY, // Clave pública
-            { global: { headers: { Authorization: `Bearer ${token}` } } }
-        );
+    // Cliente con autenticación basada en token
+    getClientWithToken(token: string): SupabaseClient {
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_KEY;
+
+        if (!supabaseUrl || !supabaseKey) {
+            throw new Error('Missing Supabase environment variables');
+        }
+
+        return createClient(supabaseUrl, supabaseKey, {
+            global: { headers: { Authorization: `Bearer ${token}` } },
+        });
     }
 }
