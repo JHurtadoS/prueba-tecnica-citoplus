@@ -45,9 +45,9 @@ export class UsersService {
     createUserDto: CreateUserDto,
     userToken: string,
   ): Promise<{ authUser: any; profile: Profile }> {
-    const supabase = this.supabaseService.getClientWithToken(userToken); // Cliente configurado con el token del usuario
+    const supabase = this.supabaseService.getClientWithToken(userToken);
 
-    // 1. Crear usuario en `auth.users`
+
     const { data: authUser, error: authError } = await supabase.auth.signUp({
       email: createUserDto.email,
       password: createUserDto.password,
@@ -59,14 +59,14 @@ export class UsersService {
       );
     }
 
-    // 2. Crear perfil en `profiles` (relacionado con el usuario creado en `auth.users`)
+
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .insert({
-        id: authUser.user.id, // Relacionar con el `id` generado en `auth.users`
+        id: authUser.user.id,
         name: createUserDto.name,
         roles: createUserDto.roles,
-        is_active: true, // Por defecto, el usuario está activo
+        is_active: true,
       })
       .select()
       .single();
@@ -81,9 +81,9 @@ export class UsersService {
   }
 
   async createUserWithServiceRole(createUserDto: CreateUserDto) {
-    const supabaseAdmin = this.supabaseService.getAdminClient(); // Usar el cliente admin
+    const supabaseAdmin = this.supabaseService.getAdminClient();
 
-    // 1. Crear usuario en auth.users
+
     const { data: authUser, error: authError } =
       await supabaseAdmin.auth.admin.createUser({
         email: createUserDto.email,
@@ -97,7 +97,7 @@ export class UsersService {
       );
     }
 
-    // 2. Crear perfil en profiles
+
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .insert({
@@ -110,7 +110,7 @@ export class UsersService {
       .single();
 
     if (profileError) {
-      // Si falla la creación del perfil, elimina el usuario en auth.users
+
       await supabaseAdmin.auth.admin.deleteUser(authUser.user.id);
       throw new BadRequestException(
         `Error creando perfil: ${profileError.message}`,
@@ -123,12 +123,12 @@ export class UsersService {
   async getUserById(userId: string, authUserId: string, isAdmin: boolean) {
     const supabase = this.supabaseService.getClient();
 
-    // 1. Condición para restringir acceso según el rol
+
 
     const query = supabase.from('profiles').select('*').eq('id', userId);
 
     if (!isAdmin) {
-      query.eq('id', authUserId); // Si no es admin, restringir al perfil del usuario autenticado
+      query.eq('id', authUserId);
     }
 
     const { data: user, error } = await query.single();
@@ -148,8 +148,8 @@ export class UsersService {
       .from('profiles')
       .select('roles')
       .eq('id', userId)
-      .limit(1); // Solo devolver la primera fila
-    // .single();
+      .limit(1);
+
 
     this.logger.debug(
       `Supabase response for userId ${userId}: data = ${JSON.stringify(data)}, error = ${error?.message}`,
@@ -169,9 +169,9 @@ export class UsersService {
   }
 
   async disableUser(userId: string): Promise<{ message: string }> {
-    const supabase = this.supabaseService.getAdminClient(); // Cliente con service_role
+    const supabase = this.supabaseService.getAdminClient();
 
-    // 1. Verificar si el usuario existe en `profiles`
+
     const { data: user, error: userError } = await supabase
       .from('profiles')
       .select('id, is_active')
@@ -188,7 +188,7 @@ export class UsersService {
       );
     }
 
-    // 2. Actualizar el estado del usuario en `profiles`
+
     const { error: profileUpdateError } = await supabase
       .from('profiles')
       .update({ is_active: false })
@@ -200,11 +200,11 @@ export class UsersService {
       );
     }
 
-    // 3. Actualizar el estado del usuario en `auth.users`
+
     const { error: authUpdateError } = await supabase.auth.admin.updateUserById(
       userId,
       {
-        user_metadata: { is_active: false }, // Marcar como inactivo en metadata
+        user_metadata: { is_active: false },
       },
     );
 
@@ -223,9 +223,9 @@ export class UsersService {
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<{ message: string }> {
-    const supabase = this.supabaseService.getAdminClient(); // Cliente administrativo con service_role
+    const supabase = this.supabaseService.getAdminClient();
 
-    // 1. Verificar si el usuario existe
+
     const { data: user, error: userError } = await supabase
       .from('profiles')
       .select('id')
@@ -236,7 +236,7 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    // 2. Actualizar los campos en `profiles`
+
     const { error: profileUpdateError } = await supabase
       .from('profiles')
       .update(updateUserDto)
@@ -252,19 +252,19 @@ export class UsersService {
   }
 
   async listUsers(page: number, limit: number): Promise<any> {
-    const supabase = this.supabaseService.getAdminClient(); // Cliente administrativo
+    const supabase = this.supabaseService.getAdminClient();
 
-    // 1. Calcular offset
+
     const offset = (page - 1) * limit;
 
-    // 2. Consultar la lista de usuarios
+
     const {
       data: users,
       error: usersError,
       count,
     } = await supabase
       .from('profiles')
-      .select('id, name, roles, is_active', { count: 'exact' }) // Consultar con conteo total
+      .select('id, name, roles, is_active', { count: 'exact' })
       .range(offset, offset + limit - 1);
 
     if (usersError) {

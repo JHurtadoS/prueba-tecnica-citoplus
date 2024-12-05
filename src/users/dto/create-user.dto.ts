@@ -20,6 +20,6 @@ export class CreateUserDto {
   name!: string;
 
   @IsArray()
-  @IsEnum(['Admin', 'Editor', 'Viewer'], { each: true }) // Valida roles permitidos
+  @IsEnum(['Admin', 'Editor', 'Viewer'], { each: true })
   roles!: ('Admin' | 'Editor' | 'Viewer')[];
 }

@@ -5,6 +5,6 @@ export class UpdateRolesDto {
   userId!: string;
 
   @IsArray()
-  @IsEnum(['Admin', 'Editor', 'Viewer'], { each: true }) // Valida cada valor del array
+  @IsEnum(['Admin', 'Editor', 'Viewer'], { each: true })
   roles!: ('Admin' | 'Editor' | 'Viewer')[];
 }

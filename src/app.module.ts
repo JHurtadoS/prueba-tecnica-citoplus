@@ -6,7 +6,7 @@ import { LogsModule } from './logsPrueba/logs.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }), // Configuración global
+    ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
     UsersModule,
     LogsModule,

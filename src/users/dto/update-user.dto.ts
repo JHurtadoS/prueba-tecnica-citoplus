@@ -9,14 +9,14 @@ import {
 export class UpdateUserDto {
   @IsString()
   @IsOptional()
-  name?: string; // Nombre del usuario (opcional)
+  name?: string;
 
   @IsArray()
   @IsEnum(['Admin', 'Editor', 'Viewer'], { each: true })
   @IsOptional()
-  roles?: ('Admin' | 'Editor' | 'Viewer')[]; // Roles del usuario (opcional)
+  roles?: ('Admin' | 'Editor' | 'Viewer')[];
 
   @IsBoolean()
   @IsOptional()
-  is_active?: boolean; // Estado activo/inactivo del usuario (opcional)
+  is_active?: boolean;
 }

@@ -31,7 +31,6 @@ export class LogsService {
 
     console.log(supabase);
 
-    // Obtener el total de registros
     const { count, error: countError } = await supabase
       .from('audit_logs')
       .select('*', { count: 'exact', head: true });
@@ -43,7 +42,6 @@ export class LogsService {
     const totalPages = count ? Math.ceil(count / limit) : 0;
     const offset = (page - 1) * limit;
 
-    // Obtener los registros con paginación
     const { data: logs, error: logsError } = await supabase
       .from('audit_logs')
       .select('*')

@@ -22,13 +22,12 @@ import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Put('roles')
   @UseGuards(AuthGuard)
   async updateRoles(@Body() updateRolesDto: UpdateRolesDto) {
     try {
-      // Llamar al servicio con los datos validados
       return await this.usersService.updateRoles(
         updateRolesDto.userId,
         updateRolesDto.roles,
@@ -39,9 +38,9 @@ export class UsersController {
   }
 
   @Post('create')
-  @UseGuards(AuthGuard) // Asegúrate de que el usuario esté autenticado
+  @UseGuards(AuthGuard)
   async createUser(@Body() createUserDto: CreateUserDto, @Req() req: any) {
-    const userToken = req.headers.authorization?.split(' ')[1]; // Extraer el token del header
+    const userToken = req.headers.authorization?.split(' ')[1];
     return this.usersService.createUser(createUserDto, userToken);
   }
 
@@ -57,9 +56,9 @@ export class UsersController {
   @Get()
   @UseGuards(AuthGuard)
   async listUsers(
-    @Query('page') page: number = 1, // Parámetro de paginación (default: 1)
-    @Query('limit') limit: number = 10, // Límite de resultados por página (default: 10)
-    @Req() req: { user: { roles: string[] } }, // Usuario autenticado
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Req() req: { user: { roles: string[] } },
   ) {
     if (!req.user.roles.includes('Admin')) {
       throw new ForbiddenException('You do not have permission to list users');
@@ -86,15 +85,15 @@ export class UsersController {
   @Patch(':id')
   @UseGuards(AuthGuard)
   async updateUser(
-    @Param('id', ParseUUIDPipe) id: string, // Validar que el ID sea un UUID válido
-    @Body() updateUserDto: UpdateUserDto, // Validar los campos editables
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
     @Req() req: { user: { sub: string; roles: string[] } },
   ) {
     console.log(req.user);
 
-    const isAdmin = req.user.roles.includes('Admin'); // Verifica si el usuario es Admin
+    const isAdmin = req.user.roles.includes('Admin');
 
-    const isSelf = req.user.sub === id; // Verifica si el usuario está editando su propio perfil
+    const isSelf = req.user.sub === id;
 
     if (!isAdmin && !isSelf) {
       throw new UnauthorizedException(
@@ -111,8 +110,8 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req: { user: { sub: string; email: string; roles: string[] } },
   ) {
-    const authUserId = req.user.sub; // ID del usuario autenticado
-    const isAdmin = req.user.roles.includes('Admin'); // Verifica si tiene el rol Admin
+    const authUserId = req.user.sub;
+    const isAdmin = req.user.roles.includes('Admin');
     return this.usersService.getUserById(id, authUserId, isAdmin);
   }
 }
