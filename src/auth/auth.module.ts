@@ -8,7 +8,6 @@ import { AuthController } from './auth.controller';
 import { LogsModule } from '../logs/logs.module';
 import { SupabaseService } from 'src/supabase/supabase.service';
 
-
 @Module({
   imports: [
     LogsModule,
@@ -27,4 +26,4 @@ import { SupabaseService } from 'src/supabase/supabase.service';
   providers: [AuthService, JwtStrategy, SupabaseService],
   exports: [AuthService, JwtModule],
 })
-export class AuthModule { }
+export class AuthModule {}

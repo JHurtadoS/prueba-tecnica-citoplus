@@ -1,19 +1,25 @@
-import { IsString, IsNotEmpty, IsEmail, IsArray, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEmail,
+  IsArray,
+  IsEnum,
+} from 'class-validator';
 
 export class CreateUserDto {
-    @IsEmail()
-    @IsNotEmpty()
-    email!: string;
+  @IsEmail()
+  @IsNotEmpty()
+  email!: string;
 
-    @IsString()
-    @IsNotEmpty()
-    password!: string;
+  @IsString()
+  @IsNotEmpty()
+  password!: string;
 
-    @IsString()
-    @IsNotEmpty()
-    name!: string;
+  @IsString()
+  @IsNotEmpty()
+  name!: string;
 
-    @IsArray()
-    @IsEnum(['Admin', 'Editor', 'Viewer'], { each: true }) // Valida roles permitidos
-    roles!: ('Admin' | 'Editor' | 'Viewer')[];
+  @IsArray()
+  @IsEnum(['Admin', 'Editor', 'Viewer'], { each: true }) // Valida roles permitidos
+  roles!: ('Admin' | 'Editor' | 'Viewer')[];
 }
