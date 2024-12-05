@@ -6,7 +6,7 @@ import { SupabaseService } from '../supabase/supabase.service';
 import { Database } from '../supabase/database.types';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { LogsService } from 'src/logs/logs.service';
+import { LogsService } from '../logs/logs.service';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 

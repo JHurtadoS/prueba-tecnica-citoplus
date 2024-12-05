@@ -1,9 +1,9 @@
 import { Controller, Put, Body, UseGuards, BadRequestException, Post, Req, Param, Get, ParseUUIDPipe, Patch, UnauthorizedException, Query, ForbiddenException } from '@nestjs/common';
-import { AuthGuard } from '../auth/auth.guard';
 import { UsersService } from './users.service';
 import { UpdateRolesDto } from './dto/update-roles.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
