@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LogsService } from '../logs/logs.service';
+import { LogsService } from '../logsPrueba/logs.service';
 import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly supabaseService: SupabaseService,
     private readonly logsService: LogsService,
-  ) {}
+  ) { }
 
   async validateToken(token: string): Promise<any> {
     try {

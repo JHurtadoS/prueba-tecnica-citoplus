@@ -11,13 +11,13 @@ import { SupabaseService } from '../supabase/supabase.service';
 import { Database } from '../supabase/database.types';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { LogsService } from '../logs/logs.service';
+import { LogsService } from '../logsPrueba/logs.service';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(private readonly supabaseService: SupabaseService) { }
 
   private readonly logger = new Logger(UsersService.name);
 

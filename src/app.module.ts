@@ -7,7 +7,7 @@ import { UsersController } from './users/users.controller';
 import { UsersService } from './users/users.service';
 import { SupabaseService } from './supabase/supabase.service';
 import { AuthModule } from './auth/auth.module';
-import { LogsModule } from './logs/logs.module';
+import { LogsModule } from './logsPrueba/logs.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -22,4 +22,4 @@ import { UsersModule } from './users/users.module';
   controllers: [AppController, UsersController],
   providers: [AppService, UsersService, SupabaseService],
 })
-export class AppModule {}
+export class AppModule { }
