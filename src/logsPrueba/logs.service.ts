@@ -3,7 +3,7 @@ import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
 export class LogsService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(private readonly supabaseService: SupabaseService) { }
 
   async logAction(
     userId: string,
@@ -25,18 +25,36 @@ export class LogsService {
     }
   }
 
-  async getLogs(): Promise<any[]> {
-    const supabase = this.supabaseService.getAdminClient();
+  async getLogs(page: number, limit: number,): Promise<{ total: number; totalPages: number; logs: any[] }> {
+    const supabase = this.supabaseService.getClient();
 
-    const { data: logs, error } = await supabase
+
+    console.log(supabase);
+
+    // Obtener el total de registros
+    const { count, error: countError } = await supabase
       .from('audit_logs')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*', { count: 'exact', head: true });
 
-    if (error) {
-      throw new Error(`Error fetching logs: ${error.message}`);
+    if (countError) {
+      throw new Error(`Error fetching logs count: ${countError.message}`);
     }
 
-    return logs;
+    const totalPages = count ? Math.ceil(count / limit) : 0;
+    const offset = (page - 1) * limit;
+
+    // Obtener los registros con paginación
+    const { data: logs, error: logsError } = await supabase
+      .from('audit_logs')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (logsError) {
+      throw new Error(`Error fetching logs: ${logsError.message}`);
+    }
+
+    return { total: count ?? 0, totalPages, logs };
   }
+
 }

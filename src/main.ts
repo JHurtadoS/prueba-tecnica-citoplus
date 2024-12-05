@@ -7,14 +7,22 @@ async function bootstrap() {
 
   // Configuración de CORS
   app.enableCors({
-    origin: 'https://citoplusback-production.up.railway.app/', // Reemplaza con la URL de tu frontend
-    credentials: true, // Habilitar envío de cookies o credenciales
+    origin: ['http://localhost:3001', 'http://localhost:3000'], // Dominios permitidos
+    credentials: true, // Habilitar envío de cookies
+    methods: ['GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'],
+    allowedHeaders: 'Content-Type,Authorization', // Encabezados permitidos
   });
 
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-  );
+  // app.useGlobalPipes(
+  //   new ValidationPipe({
+  //     transform: true, // Habilita la transformación de los tipos
+  //     whitelist: true, // Elimina propiedades no definidas en los DTOs
+  //     forbidNonWhitelisted: true, // Rechaza solicitudes con propiedades adicionales
+  //   }),
+  // );
 
   await app.listen(process.env.PORT ?? 3000);
+  app.useGlobalPipes(new ValidationPipe());
+
 }
 bootstrap();
