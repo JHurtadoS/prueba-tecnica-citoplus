@@ -9,11 +9,7 @@ async function bootstrap() {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
 
-  app.enableCors({
-    origin: '*', // Permitir todos los orígenes
-    credentials: true, // Permitir cookies y encabezados de autenticación
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Métodos HTTP permitidos
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'], // Headers permitidos
-  });
+  app.enableCors();
+
 }
 bootstrap();
